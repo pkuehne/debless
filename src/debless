@@ -1,1 +1,39 @@
 #! /bin/bash
+
+# Import helper files
+DL_PATH="${0%/*}"
+DL_MODULES="${DL_PATH}/modules"
+DL_DOWNLOADS=${DL_DOWNLOADS:-$(mktemp -d)}
+DL_DEBUG=${DL_DEBUG:-0}
+DL_BIN_DIR=${DL_BIN_DIR:-"${HOME}/bin"}
+source "$DL_PATH/print.bash"
+source "$DL_PATH/list.bash"
+source "$DL_PATH/install.bash"
+source "$DL_PATH/download.bash"
+
+debug "Temporary download directory: ${DL_DOWNLOADS}"
+
+case "$1" in
+  list)
+    info "Available modules:"
+    for module in $(available_modules)
+    do
+      info "* ${module}"
+    done
+    ;;
+  install)
+    shift 1
+    install "${@}"
+    ;;
+  ''|help)
+    error "Usage: ${0} [list|install]"
+    ;;
+  *)
+    error "${1} is not a valid subcommand"
+    exit 1
+    ;;
+esac
+
+# Cleanup the temporary directory
+debug "Cleaning up ${DL_DOWNLOADS}"
+# rm -r "${DL_DOWNLOADS}"
