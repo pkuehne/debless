@@ -1,6 +1,6 @@
 function download {
 	info "Downloading ${1##/*}"
-	if ! wget -q "${1}" -P "${DL_DOWNLOADS}"; then
+	if ! curl -L -O -s -x "${DL_PROXY}" --output-dir "${DL_DOWNLOADS}" "${1}"; then
 		error "Failed to download ${1}"
 		return 1
 	fi
@@ -23,7 +23,7 @@ function verify256 {
 
 function github_latest_version {
 	local GITHUB=$1
-	LATEST_MANIFEST=$(curl -s "https://api.github.com/repos/${GITHUB}/releases/latest")
+	LATEST_MANIFEST=$(curl -L -s -x "${DL_PROXY}" "https://api.github.com/repos/${GITHUB}/releases/latest")
 	VERSION_NUMBER=$(echo "${LATEST_MANIFEST}" | jq ".tag_name" | grep -Po '\"[v]*\K[^"]*')
 	echo "${VERSION_NUMBER}"
 }
@@ -44,4 +44,5 @@ function github_download {
 	if ! verify256 "${SHAFILE}"; then
 		return 1
 	fi
+	return 0
 }

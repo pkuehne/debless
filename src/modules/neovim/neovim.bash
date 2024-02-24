@@ -6,7 +6,12 @@ function install_neovim {
 		RELEASE=${1}
 	else
 		info "Getting latest release version"
-		RELEASE="v$(github_latest_version ${GITHUB})"
+		VERSION=$(github_latest_version ${GITHUB})
+		if [ "${VERSION}" == "" ]; then
+			error "Failed to grab latest version"
+			return 1
+		fi
+		RELEASE="v${VERSION}"
 	fi
 
 	info "Grabbing version '${RELEASE}'"
@@ -25,8 +30,8 @@ function install_neovim {
 
 	# Install in bin dir
 	local BIN_FILE="${DL_DOWNLOADS}/nvim.appimage"
-	chmod u+x "${BIN_FILE}"
-	if ! cp "${BIN_FILE}" "${DL_BIN_DIR}"/nvim; then
+	chmod a+x "${BIN_FILE}"
+	if ! sudo cp "${BIN_FILE}" "${DL_BIN_DIR}"/nvim; then
 		error "Failed to install file in ${DL_BIN_DIR}"
 		return 1
 	fi
