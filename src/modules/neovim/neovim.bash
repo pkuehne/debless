@@ -1,21 +1,14 @@
 function install_neovim {
-	local RELEASE="latest"
 	local GITHUB="neovim/neovim"
 
-	if [ "${1}" != "" ]; then
-		RELEASE=${1}
-	else
-		info "Getting latest release version"
-		VERSION=$(github_latest_version ${GITHUB})
-		if [ "${VERSION}" == "" ]; then
-			error "Failed to grab latest version"
-			return 1
-		fi
-		RELEASE="v${VERSION}"
+	VERSION=$(get_version "${GITHUB}" "${1}")
+	if [ "${VERSION}" == "" ]; then
+		error "Failed to identify a version"
+		return 1
 	fi
 
-	info "Grabbing version '${RELEASE}'"
-	if ! github_download "${GITHUB}" "${RELEASE}" nvim.appimage nvim.appimage.sha256sum; then
+	info "Grabbing version '${VERSION}'"
+	if ! github_download "${GITHUB}" "v${VERSION}" nvim.appimage nvim.appimage.sha256sum; then
 		error "Failed to download files"
 		return 1
 	fi

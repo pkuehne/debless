@@ -28,6 +28,16 @@ function github_latest_version {
 	echo "${VERSION_NUMBER}"
 }
 
+function get_version {
+	local GITHUB=$1
+	local VERSION=$2
+	if [ "${VERSION}" != "" ]; then
+		echo "${VERSION}"
+		return 0
+	fi
+	github_latest_version "${GITHUB}"
+}
+
 function github_download {
 	local GITHUB=$1
 	local VERSION=$2

@@ -1,9 +1,9 @@
 function install_lazygit {
 	local GITHUB="jesseduffield/lazygit"
 
-	VERSION=$(github_latest_version ${GITHUB})
+	VERSION=$(get_version "${GITHUB}" "${1}")
 	if [ "${VERSION}" == "" ]; then
-		error "Failed to grab latest version"
+		error "Failed to identify a version"
 		return 1
 	fi
 
