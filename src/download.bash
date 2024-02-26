@@ -11,7 +11,7 @@ function verify256 {
 	local SHAFILE=$1
 
 	if ! (
-		cd "${DL_DOWNLOADS}" || return
+		cd "${DL_DOWNLOADS}" || return 1
 		sha256sum -c --status "${SHAFILE}"
 	); then
 		error "Checksums do not match!"
@@ -38,6 +38,10 @@ function github_download {
 	if ! download "${URL}/${FILENAME}"; then
 		return 1
 	fi
+	if [ "${SHAFILE}" == "" ]; then
+		info "No checksum to verify"
+		return 0
+	fi
 	if ! download "${URL}/${SHAFILE}"; then
 		return 1
 	fi
@@ -45,4 +49,17 @@ function github_download {
 		return 1
 	fi
 	return 0
+}
+
+function install_file {
+	# Ensure file is executable
+	local BIN_FILE=$1
+	cd "${DL_DOWNLOADS}" || return 1
+	chmod a+x "${BIN_FILE}"
+	SUDO="sudo"
+	if [ -w "${DL_BIN_DIR}" ]; then
+		SUDO="" # Don't need sudo
+	fi
+	${SUDO} install "${BIN_FILE}" "${DL_BIN_DIR}"
+
 }

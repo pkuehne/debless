@@ -29,10 +29,9 @@ function install_neovim {
 	fi
 
 	# Install in bin dir
-	local BIN_FILE="${DL_DOWNLOADS}/nvim.appimage"
-	chmod a+x "${BIN_FILE}"
-	if ! sudo cp "${BIN_FILE}" "${DL_BIN_DIR}"/nvim; then
-		error "Failed to install file in ${DL_BIN_DIR}"
+	mv "${DL_DOWNLOADS}/nvim.appimage" "${DL_DOWNLOADS}/nvim"
+	if ! install_file nvim; then
+		error "Failed to install"
 		return 1
 	fi
 }
