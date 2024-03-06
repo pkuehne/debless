@@ -1,7 +1,7 @@
 function install {
 	# Check module exists
 	local MODULE=$1
-	if [ ! -f "${DL_MODULES}/${MODULE}/${MODULE}.bash" ]; then
+	if [ ! -f "${DL_MODULES}/${MODULE}.bash" ]; then
 		error "Can't install ${MODULE}: ${MODULE}.bash not found"
 		return 1
 	fi
@@ -14,7 +14,7 @@ function install {
 
 	info "Installing ${MODULE}"
 	# shellcheck disable=SC1090
-	source "${DL_MODULES}/${MODULE}/${MODULE}.bash"
+	source "${DL_MODULES}/${MODULE}.bash"
 	if [ ! "$(type -t "install_${MODULE}")" == function ]; then
 		error "${MODULE}.bash does not have an install_${MODULE} function"
 		return 1
