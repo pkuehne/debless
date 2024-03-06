@@ -1,6 +1,6 @@
 function download {
 	info "Downloading ${1##/*}"
-	if ! curl -L -O -s -x "${DL_PROXY}" --output-dir "${DL_DOWNLOADS}" "${1}"; then
+	if ! curl -L -O -s -f --output-dir "${DL_DOWNLOADS}" "${1}"; then
 		error "Failed to download ${1}"
 		return 1
 	fi
@@ -10,6 +10,7 @@ function download {
 function verify256 {
 	local SHAFILE=$1
 
+	info "Checking ${SHAFILE} in ${DL_DOWNLOADS}"
 	if ! (
 		cd "${DL_DOWNLOADS}" || return 1
 		sha256sum -c --status "${SHAFILE}"
@@ -23,7 +24,7 @@ function verify256 {
 
 function github_latest_version {
 	local GITHUB=$1
-	LATEST_MANIFEST=$(curl -L -s -x "${DL_PROXY}" "https://api.github.com/repos/${GITHUB}/releases/latest")
+	LATEST_MANIFEST=$(curl -L -s "https://api.github.com/repos/${GITHUB}/releases/latest")
 	VERSION_NUMBER=$(echo "${LATEST_MANIFEST}" | jq ".tag_name" | grep -Po '\"[v]*\K[^"]*')
 	echo "${VERSION_NUMBER}"
 }
